@@ -304,7 +304,7 @@ class LycorisNetwork(torch.nn.Module):
                     loras.append(lora)
             return loras
         
-        if network_module == GLoRAModule:
+        if network_module == GLoRAModule or network_module == TGLoRAModule:
             print('GLoRA enabled, only train transformer')
             # only train transformer (for GLoRA)
             LycorisNetwork.UNET_TARGET_REPLACE_MODULE = [
