@@ -18,6 +18,7 @@ from ..modules.ia3 import IA3Module
 from ..modules.lokr import LokrModule
 from ..modules.dylora import DyLoraModule
 from ..modules.glora import GLoRAModule
+from ..modules.tglora import TGLoRAModule
 from ..modules.hypernet import ImgWeightGenerator, TextWeightGenerator
 
 from ..config import PRESET
@@ -44,6 +45,7 @@ def create_network(multiplier, network_dim, network_alpha, vae, text_encoder, un
         'lokr': LokrModule,
         'dylora': DyLoraModule,
         'glora': GLoRAModule,
+        'tglora': TGLoRAModule,
     }[algo]
     
     preset = kwargs.get('preset', 'full')
