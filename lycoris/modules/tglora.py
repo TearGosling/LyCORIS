@@ -77,7 +77,7 @@ class TGLoRAModule(nn.Module):
         wbd = self.bd.weight.view(self.bd.weight.size(0), -1)
         wbu = self.bu.weight.view(self.bu.weight.size(0), -1)
         orig = self.org_module[0].weight.view(self.org_module[0].weight.size(0), -1)
-        return ((wbu @ wbd) + ((orig @ wau) @ wad))
+        return (F.gelu((wbu @ wbd)) + ((orig @ wau) @ wad))
 
     def forward(self, x):
         if self.module_dropout and self.training:
@@ -85,8 +85,8 @@ class TGLoRAModule(nn.Module):
                 return self.org_forward(x)
         scale = self.scale * self.multiplier
         
-        ax_mid = F.silu(self.ad(x)) * scale
-        bx_mid = F.silu(self.bd(x)) * scale
+        ax_mid = self.ad(x) * scale
+        bx_mid = self.bd(x) * scale
         
         if self.rank_dropout and self.training:
             drop_a = torch.rand(self.lora_dim, device=ax_mid.device) < self.rank_dropout
