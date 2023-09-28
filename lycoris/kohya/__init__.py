@@ -20,6 +20,7 @@ from ..modules.ia3 import IA3Module
 from ..modules.lokr import LokrModule
 from ..modules.dylora import DyLoraModule
 from ..modules.glora import GLoRAModule
+from ..modules.tglora import TGLoRAModule
 from ..modules.norms import NormModule
 from ..modules.full import FullModule
 from ..modules import make_module
@@ -37,6 +38,7 @@ network_module_dict = {
     'lokr': LokrModule,
     'dylora': DyLoraModule,
     'glora': GLoRAModule,
+    'tglora': TGLoRAModule,
     'full': FullModule,
 }
 
@@ -60,9 +62,9 @@ def create_network(multiplier, network_dim, network_alpha, vae, text_encoder, un
     block_size = int(kwargs.get('block_size', 4) or 4)
     train_norm = kwargs.get('train_norm', False)
     
-    if algo == 'glora' and conv_dim>0:
+    if (algo == 'glora' or algo == 'tglora') and conv_dim>0:
         conv_dim = 0
-        print('Disable conv layer for GLoRA')
+        print('Disable conv layer for (T)GLoRA')
     
     preset = kwargs.get('preset', 'full')
     if preset not in PRESET:
@@ -410,7 +412,7 @@ class LycorisNetwork(torch.nn.Module):
                         loras.append(lora)
             return loras
         
-        if network_module == GLoRAModule:
+        if network_module == GLoRAModule or network_module == TGLoRAModule:
             print('GLoRA enabled, only train transformer')
             # only train transformer (for GLoRA)
             LycorisNetwork.UNET_TARGET_REPLACE_MODULE = [
